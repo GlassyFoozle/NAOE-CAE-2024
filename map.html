@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map</title>
+    <style>
+        /* Ensure the map div takes up the full window size */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            height: 100%;
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDh0fKINGAkEUQ8vTksX6enj1dWkxxXPi4"></script>
+    <script>
+        function initMap() {
+            var mapOptions = {
+                center: { lat: 35.532600, lng: 127.524612 },
+                zoom: 8
+            };
+            var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            window.placeMarker = function(lat, lng) {
+                var marker = new google.maps.Marker({
+                    position: { lat: lat, lng: lng },
+                    map: map
+                });
+                map.setCenter(marker.getPosition());
+            }
+        }
+
+        function placeMarker(lat, lng) {
+            var marker = new google.maps.Marker({
+                position: {lat: lat, lng: lng},
+                map: map
+            });
+            map.setCenter(marker.getPosition());
+        }
+    </script>
+</head>
+<body onload="initMap()">
+    <div id="map"></div>
+</body>
+</html>

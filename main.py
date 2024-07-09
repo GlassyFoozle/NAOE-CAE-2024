@@ -6,7 +6,6 @@ from sklearn.metrics import classification_report, accuracy_score
 from sklearn.inspection import permutation_importance
 from matplotlib import pyplot as plt
 
-# 관공선, 유도선 날림
 df = pd.read_csv('통합v4.csv',encoding='cp949')
 
 # 범주형 변수들 encoding
@@ -77,8 +76,8 @@ def recommend_top_3_accident_types(Station, Location, Weather, Latitude, Longitu
 sample_station = '부산'
 sample_location = '항계 내'
 sample_weather = '양호'
-sample_latitude = 35
-sample_longitude = 128
+sample_latitude = 35.15777778
+sample_longitude = 129.1916667
 sample_Vessel_type = '어선'
 sample_tonnage = 10
 sample_month = 1
