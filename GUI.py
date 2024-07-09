@@ -53,6 +53,7 @@ class MapApp(QWidget):
         error_dialog.setWindowTitle(title)
         error_dialog.exec_()
 
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = MapApp()

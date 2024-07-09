@@ -76,8 +76,8 @@ def recommend_top_3_accident_types(Station, Location, Weather, Latitude, Longitu
 sample_station = '부산'
 sample_location = '항계 내'
 sample_weather = '양호'
-sample_latitude = 35.15777778
-sample_longitude = 129.1916667
+sample_latitude = 35
+sample_longitude = 129
 sample_Vessel_type = '어선'
 sample_tonnage = 10
 sample_month = 1
