@@ -1,61 +1,82 @@
 import sys
-from PyQt5.QtCore import QUrl
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QMessageBox
+import io
+import folium
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QLineEdit, QPushButton, QLabel
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
-class MapApp(QWidget):
+class MyApp(QWidget):
     def __init__(self):
         super().__init__()
-        self.initUI()
+        self.setWindowTitle('Test Map')
+        self.window_width, self.window_height = 1200, 800
+        self.setMinimumSize(self.window_width, self.window_height)
 
-    def initUI(self):
-        self.setWindowTitle('Map Coordinate Marker')
-        self.setGeometry(100, 100, 1200, 800)
+        self.layout = QVBoxLayout()
+        self.setLayout(self.layout)
 
-        layout = QVBoxLayout()
-
-        # Latitude input
-        self.lat_label = QLabel('Latitude:', self)
-        layout.addWidget(self.lat_label)
+        # Input fields and button
+        input_layout = QHBoxLayout()
         self.lat_input = QLineEdit(self)
-        layout.addWidget(self.lat_input)
+        self.lon_input = QLineEdit(self)
+        self.add_marker_button = QPushButton('Add Marker', self)
 
-        # Longitude input
-        self.lng_label = QLabel('Longitude:', self)
-        layout.addWidget(self.lng_label)
-        self.lng_input = QLineEdit(self)
-        layout.addWidget(self.lng_input)
+        input_layout.addWidget(QLabel('Latitude:'))
+        input_layout.addWidget(self.lat_input)
+        input_layout.addWidget(QLabel('Longitude:'))
+        input_layout.addWidget(self.lon_input)
+        input_layout.addWidget(self.add_marker_button)
 
-        # Button to mark the point
-        self.mark_button = QPushButton('Mark Point', self)
-        self.mark_button.clicked.connect(self.mark_point)
-        layout.addWidget(self.mark_button)
+        self.layout.addLayout(input_layout)
 
-        # Web view to display the map
-        self.browser = QWebEngineView()
-        self.browser.setUrl(QUrl("file:///map.html"))
-        layout.addWidget(self.browser)
+        self.coordinate = (35.532600, 127.524612)
+        self.map = folium.Map(
+            title="Start Point",
+            zoom_start=8,
+            location=self.coordinate
+        )
 
-        self.setLayout(layout)
+        self.data = io.BytesIO()
+        self.map.save(self.data, close_file=False)
 
-    def mark_point(self):
-        try:
-            lat = float(self.lat_input.text())
-            lng = float(self.lng_input.text())
-            self.browser.page().runJavaScript(f'placeMarker({lat}, {lng})')
-        except ValueError:
-            self.show_error("Invalid input", "Please enter valid coordinates.")
+        self.webView = QWebEngineView()
+        self.webView.setHtml(self.data.getvalue().decode())
+        self.layout.addWidget(self.webView)
 
-    def show_error(self, title, message):
-        error_dialog = QMessageBox()
-        error_dialog.setIcon(QMessageBox.Critical)
-        error_dialog.setText(message)
-        error_dialog.setWindowTitle(title)
-        error_dialog.exec_()
+        self.add_marker_button.clicked.connect(self.update_map)
 
+    def update_map(self):
+        lat = float(self.lat_input.text())
+        lon = float(self.lon_input.text())
+
+        self.coordinate = (lat, lon)
+        self.map = folium.Map(
+            title="Start Point",
+            zoom_start=8,
+            location=self.coordinate
+        )
+
+        # Add new marker
+        folium.Marker(location=self.coordinate).add_to(self.map)
+
+        # Save updated map to data object
+        self.data = io.BytesIO()
+        self.map.save(self.data, close_file=False)
+
+        # Update web view with new map
+        self.webView.setHtml(self.data.getvalue().decode())
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = MapApp()
-    ex.show()
-    sys.exit(app.exec_())
+    app.setStyleSheet('''
+        QWidget {
+            font-size: 20px;
+        }
+    ''')
+
+    myApp = MyApp()
+    myApp.show()
+
+    try:
+        sys.exit(app.exec_())
+    except SystemExit:
+        print('Closing Window...')
