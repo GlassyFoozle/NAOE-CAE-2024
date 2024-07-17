@@ -3,8 +3,9 @@ import folium
 import io
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
+# from model import 함수이름
 
-# Load UI file
+# UI 파일 불러오기
 form_class = uic.loadUiType("GUI.ui")[0]
 
 
@@ -16,7 +17,7 @@ class WindowClass(QDialog, form_class) :
         self.window_width, self.window_height = 1400, 800
         self.setMinimumSize(400, 300)
 
-        # Load folium map
+        # 지도 불러오기
         self.coordinate = (35.532600, 127.524612)
         self.map = folium.Map(
             title="Start Point",
@@ -28,14 +29,17 @@ class WindowClass(QDialog, form_class) :
         self.map.save(self.data, close_file=False)
         self.webEngineView.setHtml(self.data.getvalue().decode())
 
+        self.update_button.clicked.connect(self.update_map)
+
+
     # Update map and accident cases
     def update_map(self):
-        # 현재 위치 아이콘
+        # 현재 위치 마커 아이콘
         icon_url = 'https://cdn4.iconfinder.com/data/icons/web-ui-color/128/Marker_red-512.png'
         ship_icon = folium.features.CustomIcon(icon_url, icon_size=(30, 30))
 
-        lat = float(self.lat_input.text())
-        lon = float(self.lon_input.text())
+        lat = float(self.lat_input.value())
+        lon = float(self.lon_input.value())
 
         self.coordinate = (lat, lon)
         self.map = folium.Map(
@@ -44,15 +48,23 @@ class WindowClass(QDialog, form_class) :
             location=self.coordinate
         )
 
-        # Add new marker
+        # 현재 위치 마커 생성
         folium.Marker(location=self.coordinate, icon=ship_icon).add_to(self.map)
 
-        # Save updated map to data object
         self.data = io.BytesIO()
         self.map.save(self.data, close_file=False)
 
-        # Update web view with new map
-        self.webView.setHtml(self.data.getvalue().decode())
+        # 새로운 지도 표시
+        self.webEngineView.setHtml(self.data.getvalue().decode())
+
+        weather = self.weather_comboBox.currentText()
+        vessel = self.vessel_comboBox.currentText()
+
+        # 사고 유형 업데이트
+        t1, t2, t3 = "좌초", "뭐시기", "저시기" # 나중에 모델 확정되면 '= 함수이름(lat, lon, weather, vessel)'
+        self.t1_accident.setText(f"1. {t1}")
+        self.t2_accident.setText(f"2. {t2}")
+        self.t3_accident.setText(f"3. {t3}")
 
 
 if __name__ == "__main__" :
