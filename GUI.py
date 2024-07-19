@@ -2,8 +2,9 @@ import sys
 import folium
 import io
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import Qt
 from PyQt5 import uic
-# from model import 함수이름
+from tf_model import acc_type_predict
 
 # UI 파일 불러오기
 form_class = uic.loadUiType("GUI.ui")[0]
@@ -14,7 +15,8 @@ class WindowClass(QDialog, form_class) :
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle('CAE Project')
-        self.window_width, self.window_height = 1400, 800
+        self.window_width, self.window_height = 1200, 800
+        self.setGeometry(300, 100, self.window_width, self.window_height)
         self.setMinimumSize(400, 300)
 
         # 지도 불러오기
@@ -44,7 +46,7 @@ class WindowClass(QDialog, form_class) :
         self.coordinate = (lat, lon)
         self.map = folium.Map(
             title="Start Point",
-            zoom_start=11,
+            zoom_start=10,
             location=self.coordinate
         )
 
@@ -61,10 +63,25 @@ class WindowClass(QDialog, form_class) :
         vessel = self.vessel_comboBox.currentText()
 
         # 사고 유형 업데이트
-        t1, t2, t3 = "좌초", "뭐시기", "저시기" # 나중에 모델 확정되면 '= 함수이름(lat, lon, weather, vessel)'
-        self.t1_accident.setText(f"1. {t1}")
-        self.t2_accident.setText(f"2. {t2}")
-        self.t3_accident.setText(f"3. {t3}")
+        types, probabilities = acc_type_predict(lat, lon, weather, vessel)
+
+        self.t1_accident.setText(f"1. {types[0]}, 확률: {round(100 * probabilities[0], 1)}%")
+        self.t2_accident.setText(f"2. {types[1]}, 확률: {round(100 * probabilities[1], 1)}%")
+        self.t3_accident.setText(f"3. {types[2]}, 확률: {round(100 * probabilities[2], 1)}%")
+
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key_W:
+            cur_lat = float(self.lat_input.value())
+            self.lat_input.setValue(cur_lat + 0.1)
+        elif e.key() == Qt.Key_A:
+            cur_lon = float(self.lon_input.value())
+            self.lon_input.setValue(cur_lon - 0.1)
+        elif e.key() == Qt.Key_S:
+            cur_lat = float(self.lat_input.value())
+            self.lat_input.setValue(cur_lat - 0.1)
+        elif e.key() == Qt.Key_D:
+            cur_lon = float(self.lon_input.value())
+            self.lon_input.setValue(cur_lon + 0.1)
 
 
 if __name__ == "__main__" :
