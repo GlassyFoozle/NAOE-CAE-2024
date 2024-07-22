@@ -1,3 +1,5 @@
+import os
+import sys
 import tensorflow as tf
 import numpy as np
 import pandas as pd
@@ -12,9 +14,18 @@ lon_min=120.0
 lon_max=136.33
 type_list=['기관이상','방향상실','부유물감김','운항저해','인명사상','전복','조난','충돌','침몰','침수','화재']
 
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+
 #모델 로드
-loaded_model = tf.keras.models.load_model('./accident_prediction_model.keras')
-preprocessor = joblib.load('preprocessor.pkl')
+loaded_model = tf.keras.models.load_model(resource_path('accident_prediction_model.keras'))
+preprocessor = joblib.load(resource_path('preprocessor.pkl'))
 
 
 def acc_type_predict(latitude,longitude,ship_type,weather):

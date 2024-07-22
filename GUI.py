@@ -1,13 +1,25 @@
+import os
 import sys
-import folium
 import io
+import folium
+from folium.plugins import MousePosition
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5 import uic
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 from tf_model import acc_type_predict
 
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+
 # UI 파일 불러오기
-form_class = uic.loadUiType("GUI.ui")[0]
+form_class = uic.loadUiType(resource_path("GUI.ui"))[0]
 
 
 class WindowClass(QDialog, form_class) :
@@ -26,6 +38,20 @@ class WindowClass(QDialog, form_class) :
             zoom_start=8,
             location=self.coordinate
         )
+
+        formatter = "function(num) {return L.Util.formatNum(num, 5);};"
+        mouse_position = MousePosition(
+            position='topright',
+            separator=' Long: ',
+            empty_string='NaN',
+            lng_first=False,
+            num_digits=20,
+            prefix='Lat: ',
+            lat_formatter=formatter,
+            lng_formatter=formatter,
+        )
+        self.map.add_child(mouse_position)
+
 
         self.data = io.BytesIO()
         self.map.save(self.data, close_file=False)
@@ -46,9 +72,22 @@ class WindowClass(QDialog, form_class) :
         self.coordinate = (lat, lon)
         self.map = folium.Map(
             title="Start Point",
-            zoom_start=10,
+            zoom_start=11,
             location=self.coordinate
         )
+
+        formatter = "function(num) {return L.Util.formatNum(num, 5);};"
+        mouse_position = MousePosition(
+            position='topright',
+            separator=' Long: ',
+            empty_string='NaN',
+            lng_first=False,
+            num_digits=20,
+            prefix='Lat: ',
+            lat_formatter=formatter,
+            lng_formatter=formatter,
+        )
+        self.map.add_child(mouse_position)
 
         # 현재 위치 마커 생성
         folium.Marker(location=self.coordinate, icon=ship_icon).add_to(self.map)
