@@ -7,7 +7,9 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5 import uic
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from tf_model import acc_type_predict
+import pyqtgraph as pg
+from pyqtgraph import PlotWidget
+from model import acc_type_predict
 
 
 def resource_path(relative_path):
@@ -52,13 +54,13 @@ class WindowClass(QDialog, form_class) :
         )
         self.map.add_child(mouse_position)
 
-
         self.data = io.BytesIO()
         self.map.save(self.data, close_file=False)
         self.webEngineView.setHtml(self.data.getvalue().decode())
 
-        self.update_button.clicked.connect(self.update_map)
+        self.plot_graph([1 for i in range(11)])
 
+        self.update_button.clicked.connect(self.update_map)
 
     # Update map and accident cases
     def update_map(self):
@@ -98,15 +100,38 @@ class WindowClass(QDialog, form_class) :
         # 새로운 지도 표시
         self.webEngineView.setHtml(self.data.getvalue().decode())
 
+        hour = int(self.hour_lineEdit.text())
         weather = self.weather_comboBox.currentText()
         vessel = self.vessel_comboBox.currentText()
+        tons = float(self.tons_lineEdit.text())
+
+        # types, probabilities = acc_type_predict(lat, lon, weather, vessel)
 
         # 사고 유형 업데이트
-        types, probabilities = acc_type_predict(lat, lon, weather, vessel)
+        x1 = [5, 5, 7, 10, 3, 8, 9, 1, 6, 2, 1]
+        self.plot_graph(x1)
 
-        self.t1_accident.setText(f"1. {types[0]}, 확률: {round(100 * probabilities[0], 1)}%")
-        self.t2_accident.setText(f"2. {types[1]}, 확률: {round(100 * probabilities[1], 1)}%")
-        self.t3_accident.setText(f"3. {types[2]}, 확률: {round(100 * probabilities[2], 1)}%")
+        # self.t1_accident.setText(f"1. {types[0]}, 확률: {round(100 * probabilities[0], 1)}%")
+        # self.t2_accident.setText(f"2. {types[1]}, 확률: {round(100 * probabilities[1], 1)}%")
+        # self.t3_accident.setText(f"3. {types[2]}, 확률: {round(100 * probabilities[2], 1)}%")
+
+    def plot_graph(self, x1):
+        self.graphWidget.setBackground('w')
+        ylab = ['기관이상', '부유물감김', '운항저해', '작업 중 인명사상', '전복', '좌초', '충돌', '침몰', '침수', '표류', '해양오염']
+        yval = list(range(len(ylab)))
+
+        ticks = []
+        for i, item in enumerate(ylab):
+            ticks.append((yval[i], item))
+        ticks = [ticks]
+
+        accident_colors = {'기관이상': '#B3B3B3', '부유물감김': '#FF0000', '운항저해': '#FF0000', '작업 중 인명사상': '#B3B3B3'
+            , '전복': '#FF0000', '좌초': '#FF0000', '충돌': '#FF0000', '침몰': '#B3B3B3', '침수': '#B3B3B3'
+            , '표류': '#B3B3B3', '해양오염': '#FF0000'}
+        bargraph = pg.BarGraphItem(x0=0, y=yval, height=0.6, width=x1, brushes=[accident_colors[y] for y in ylab])
+        self.graphWidget.addItem(bargraph)
+        ax = self.graphWidget.getAxis('left')
+        ax.setTicks(ticks)
 
     def keyPressEvent(self, e):
         if e.key() == Qt.Key_W:

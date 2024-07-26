@@ -12,7 +12,7 @@ lat_min=20.467
 lat_max=41.5
 lon_min=120.0
 lon_max=136.33
-type_list=['기관이상','방향상실','부유물감김','운항저해','인명사상','전복','조난','충돌','침몰','침수','화재']
+type_list=['기관이상', '부유물감김', '운항저해', '작업 중 인명사상', '전복', '좌초', '충돌', '침몰', '침수', '표류', '해양오염']
 
 
 def resource_path(relative_path):
@@ -24,7 +24,7 @@ def resource_path(relative_path):
 
 
 #모델 로드
-loaded_model = tf.keras.models.load_model(resource_path('accident_prediction_model.keras'))
+loaded_model = tf.keras.models.load_model(resource_path('accident_prediction_model_2.keras'))
 preprocessor = joblib.load(resource_path('preprocessor.pkl'))
 
 
@@ -47,7 +47,7 @@ def acc_type_predict(latitude,longitude,ship_type,weather):
     top_3_pred_classes = np.argsort(predictions, axis=1)[:, -3:]
     top_3 = top_3_pred_classes[0][::-1]
     result=[]
-    for i in range(3):
+    for i in range(len(type_list)):
         result.append(type_list[top_3[i]])
     print("예측 결과:", result) #1,2,3위 순
     top_3_probabilities = predictions[0][top_3]
