@@ -16,8 +16,9 @@ def resource_path(relative_path):
 
 # 모델 로드
 loaded_model = joblib.load(resource_path('random_forest_model.sav'))
-with open('label_encoder.pkl', 'rb') as f:
+with open(resource_path('label_encoder.pkl'), 'rb') as f:
     label_encoders = pickle.load(f)
+
 
 def acc_type_predict(lat, lon, hour, weather, vessel, tons):
     input_data = pd.DataFrame({
@@ -33,11 +34,13 @@ def acc_type_predict(lat, lon, hour, weather, vessel, tons):
         input_data[column] = label_encoders[column].transform(input_data[column])
 
     prob = loaded_model.predict_proba(input_data)[0]
-    top_3_indices = prob.argsort()[-3:][::-1]
-    print(top_3_indices)
-    top_3_predictions = label_encoders['Accident_Type'].inverse_transform(top_3_indices)
-    print(top_3_predictions)
-    return top_3_predictions
 
+    sorted_indices = prob.argsort()[:]
+    sorted_predictions = label_encoders['Accident_Type'].inverse_transform(sorted_indices)
+    print(sorted_predictions)
+    prob.sort()
+    print(prob)
+    return sorted_predictions, prob
 
-acc_type_predict(35.158, 129.192, 16, '양호', '어선', 10)
+# 예시 코드
+# acc_type_predict(36.45361, 129.4353, 11, '풍랑주의보', '어선', 5)

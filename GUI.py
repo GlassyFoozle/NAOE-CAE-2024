@@ -28,7 +28,7 @@ class WindowClass(QDialog, form_class) :
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle('CAE Project')
+        self.setWindowTitle('Marine Accident Prediction System')
         self.window_width, self.window_height = 1200, 800
         self.setGeometry(300, 100, self.window_width, self.window_height)
         self.setMinimumSize(400, 300)
@@ -58,7 +58,7 @@ class WindowClass(QDialog, form_class) :
         self.map.save(self.data, close_file=False)
         self.webEngineView.setHtml(self.data.getvalue().decode())
 
-        self.plot_graph([1 for i in range(11)])
+        self.plot_graph(['기관이상', '부유물감김', '운항저해', '작업 중 인명사상', '전복', '좌초', '충돌', '침몰', '침수', '표류', '해양오염'], [1 for i in range(11)])
 
         self.update_button.clicked.connect(self.update_map)
 
@@ -105,19 +105,14 @@ class WindowClass(QDialog, form_class) :
         vessel = self.vessel_comboBox.currentText()
         tons = float(self.tons_lineEdit.text())
 
-        # types, probabilities = acc_type_predict(lat, lon, weather, vessel)
+        types, prob = acc_type_predict(lat, lon, hour, weather, vessel, tons)
 
         # 사고 유형 업데이트
-        x1 = [5, 5, 7, 10, 3, 8, 9, 1, 6, 2, 1]
-        self.plot_graph(x1)
+        self.plot_graph(types, prob)
 
-        # self.t1_accident.setText(f"1. {types[0]}, 확률: {round(100 * probabilities[0], 1)}%")
-        # self.t2_accident.setText(f"2. {types[1]}, 확률: {round(100 * probabilities[1], 1)}%")
-        # self.t3_accident.setText(f"3. {types[2]}, 확률: {round(100 * probabilities[2], 1)}%")
-
-    def plot_graph(self, x1):
+    def plot_graph(self, ylab, prob):
         self.graphWidget.setBackground('w')
-        ylab = ['기관이상', '부유물감김', '운항저해', '작업 중 인명사상', '전복', '좌초', '충돌', '침몰', '침수', '표류', '해양오염']
+        self.graphWidget.clear()
         yval = list(range(len(ylab)))
 
         ticks = []
@@ -128,7 +123,7 @@ class WindowClass(QDialog, form_class) :
         accident_colors = {'기관이상': '#B3B3B3', '부유물감김': '#FF0000', '운항저해': '#FF0000', '작업 중 인명사상': '#B3B3B3'
             , '전복': '#FF0000', '좌초': '#FF0000', '충돌': '#FF0000', '침몰': '#B3B3B3', '침수': '#B3B3B3'
             , '표류': '#B3B3B3', '해양오염': '#FF0000'}
-        bargraph = pg.BarGraphItem(x0=0, y=yval, height=0.6, width=x1, brushes=[accident_colors[y] for y in ylab])
+        bargraph = pg.BarGraphItem(x0=0, y=yval, height=0.6, width=prob, brushes=[accident_colors[y] for y in ylab])
         self.graphWidget.addItem(bargraph)
         ax = self.graphWidget.getAxis('left')
         ax.setTicks(ticks)
