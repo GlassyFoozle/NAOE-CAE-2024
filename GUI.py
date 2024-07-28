@@ -5,7 +5,7 @@ import folium
 from folium.plugins import MousePosition
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
-from PyQt5 import uic
+from PyQt5 import uic, QtGui
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 import pyqtgraph as pg
 from pyqtgraph import PlotWidget
@@ -29,6 +29,7 @@ class WindowClass(QDialog, form_class) :
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle('Marine Accident Prediction System')
+        self.setWindowIcon(QtGui.QIcon(resource_path('icon.ico')))
         self.window_width, self.window_height = 1200, 800
         self.setGeometry(300, 100, self.window_width, self.window_height)
         self.setMinimumSize(400, 300)
@@ -58,7 +59,8 @@ class WindowClass(QDialog, form_class) :
         self.map.save(self.data, close_file=False)
         self.webEngineView.setHtml(self.data.getvalue().decode())
 
-        self.plot_graph(['기관이상', '부유물감김', '운항저해', '작업 중 인명사상', '전복', '좌초', '충돌', '침몰', '침수', '표류', '해양오염'], [1 for i in range(11)])
+        acc_types = ['기관이상', '부유물감김', '운항저해', '작업 중 인명사상', '전복', '좌초', '충돌', '침몰', '침수', '표류', '해양오염']
+        self.plot_graph(acc_types, [0 for i in range(len(acc_types))])
 
         self.update_button.clicked.connect(self.update_map)
 
