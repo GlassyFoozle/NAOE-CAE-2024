@@ -35,7 +35,7 @@
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="rightTab" stretch="0,0,0,0,4,0,0,1,1,0,1,1,1,0,0,1">
+      <layout class="QVBoxLayout" name="rightTab" stretch="6,0,0,0,1,1,0,1,1,1,0,0,0">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -49,65 +49,188 @@
         <number>10</number>
        </property>
        <item>
-        <widget class="QLabel" name="label_4">
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="text">
-          <string>Accident Predictions</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="margin">
+        <widget class="QTabWidget" name="tabWidget">
+         <property name="currentIndex">
           <number>0</number>
          </property>
+         <widget class="QWidget" name="tab">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <attribute name="title">
+           <string>Predictions</string>
+          </attribute>
+          <widget class="QWidget" name="verticalLayoutWidget">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>351</width>
+             <height>311</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,5">
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>13</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_4">
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
+              </property>
+              <property name="text">
+               <string>Accident Predictions</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>지리적 요인 - 빨간색(주의 요망)</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <property name="wordWrap">
+               <bool>false</bool>
+              </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>인위적 요인 - 회색</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="PlotWidget" name="graphWidget" native="true"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="tab_2">
+          <attribute name="title">
+           <string>View data</string>
+          </attribute>
+          <widget class="QWidget" name="verticalLayoutWidget_2">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>351</width>
+             <height>311</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0">
+            <property name="topMargin">
+             <number>50</number>
+            </property>
+            <property name="bottomMargin">
+             <number>100</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>사고유형별 데이터 히트맵 보기</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="acc_comboBox">
+              <item>
+               <property name="text">
+                <string>기관이상</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>부유물감김</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>운항저해</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>작업 중 인명사상</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>전복</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>좌초</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>충돌</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>침몰</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>침수</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>표류</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>해양오염</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="viewdata_button">
+              <property name="text">
+               <string>히트맵 불러오기</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
         </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>지리적 요인 - 빨간색(주의 요망) / 인위적 요인 - 회색</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="wordWrap">
-          <bool>false</bool>
-         </property>
-         <property name="margin">
-          <number>0</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>10</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="PlotWidget" name="graphWidget" native="true"/>
        </item>
        <item>
         <spacer name="verticalSpacer_4">
@@ -121,6 +244,13 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="example_button">
+         <property name="text">
+          <string>Example Route</string>
+         </property>
+        </widget>
        </item>
        <item alignment="Qt::AlignHCenter">
         <widget class="QLabel" name="label">

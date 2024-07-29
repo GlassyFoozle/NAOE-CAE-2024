@@ -4,7 +4,8 @@ import io
 import folium
 from folium.plugins import MousePosition
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtTest import *
 from PyQt5 import uic, QtGui
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 import pyqtgraph as pg
@@ -63,9 +64,11 @@ class WindowClass(QDialog, form_class) :
         self.plot_graph(acc_types, [0 for i in range(len(acc_types))])
 
         self.update_button.clicked.connect(self.update_map)
+        self.example_button.clicked.connect(self.example_route)
+        self.viewdata_button.clicked.connect(self.view_data)
 
     # Update map and accident cases
-    def update_map(self):
+    def update_map(self, route_coordinates=None):
         # 현재 위치 마커 아이콘
         icon_url = 'https://cdn4.iconfinder.com/data/icons/web-ui-color/128/Marker_red-512.png'
         ship_icon = folium.features.CustomIcon(icon_url, icon_size=(30, 30))
@@ -76,7 +79,7 @@ class WindowClass(QDialog, form_class) :
         self.coordinate = (lat, lon)
         self.map = folium.Map(
             title="Start Point",
-            zoom_start=11,
+            zoom_start=13,
             location=self.coordinate
         )
 
@@ -95,6 +98,12 @@ class WindowClass(QDialog, form_class) :
 
         # 현재 위치 마커 생성
         folium.Marker(location=self.coordinate, icon=ship_icon).add_to(self.map)
+
+        print(route_coordinates)
+        if route_coordinates is not False:
+            for coord in route_coordinates:
+                folium.CircleMarker(location=coord, radius=1, fill_color='black', color='black').add_to(self.map)
+            folium.PolyLine(locations=route_coordinates, color='black', weight=1).add_to(self.map)
 
         self.data = io.BytesIO()
         self.map.save(self.data, close_file=False)
@@ -129,6 +138,50 @@ class WindowClass(QDialog, form_class) :
         self.graphWidget.addItem(bargraph)
         ax = self.graphWidget.getAxis('left')
         ax.setTicks(ticks)
+
+    def example_route(self):
+        route_coordinates = [
+            (35.62057, 126.46879),
+            (35.62194, 126.46332),
+            (35.62015, 126.45814),
+            (35.62933, 126.45611),
+            (35.64131, 126.45255),
+            (35.6509, 126.45294),
+            (35.6748, 126.45229),
+            (35.70157, 126.45041),
+            (35.72903, 126.44019),
+            (35.76323, 126.41324),
+            (35.7853, 126.40165),
+            (35.81113, 126.38672),
+            (35.82366, 126.38161),
+            (35.83792, 126.38904),
+            (35.85434, 126.39101),
+            (35.86669, 126.39625),
+            (35.89058, 126.41556),
+            (35.91728, 126.43032),
+            (35.94702, 126.46637),
+            (35.96877, 126.48826),
+            (35.98058, 126.51323),
+            (35.98, 126.53503),
+            (35.97974, 126.54847),
+            (35.97974, 126.56593),
+            (35.98012, 126.57928),
+            (35.98077, 126.59402),
+            (35.98137, 126.60649),
+            (35.98169, 126.6185),
+            (35.97946, 126.62795)
+        ]
+        for curcoord in route_coordinates:
+            self.lat_input.setValue(curcoord[0])
+            self.lon_input.setValue(curcoord[1])
+            self.update_map(route_coordinates)
+            QTest.qWait(1000)
+
+    def view_data(self):
+        acc = self.acc_comboBox.currentText()
+        filename = "html_files/" + acc + "_heatmap.html"
+        url = QUrl.fromLocalFile(resource_path(filename))
+        self.webEngineView.load(url)
 
     def keyPressEvent(self, e):
         if e.key() == Qt.Key_W:
