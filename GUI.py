@@ -29,7 +29,7 @@ class WindowClass(QDialog, form_class) :
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle('Marine Accident Prediction System')
+        self.setWindowTitle('MAPS')
         self.setWindowIcon(QtGui.QIcon(resource_path('icon.ico')))
         self.window_width, self.window_height = 1200, 800
         self.setGeometry(300, 100, self.window_width, self.window_height)
@@ -131,10 +131,8 @@ class WindowClass(QDialog, form_class) :
             ticks.append((yval[i], item))
         ticks = [ticks]
 
-        accident_colors = {'기관이상': '#B3B3B3', '부유물감김': '#FF0000', '운항저해': '#FF0000', '작업 중 인명사상': '#B3B3B3'
-            , '전복': '#FF0000', '좌초': '#FF0000', '충돌': '#FF0000', '침몰': '#B3B3B3', '침수': '#B3B3B3'
-            , '표류': '#B3B3B3', '해양오염': '#FF0000'}
-        bargraph = pg.BarGraphItem(x0=0, y=yval, height=0.6, width=prob, brushes=[accident_colors[y] for y in ylab])
+        colors = ['#B3B3B3'] * (len(ylab) -3) + ['#FF0000'] * 3
+        bargraph = pg.BarGraphItem(x0=0, y=yval, height=0.6, width=prob, brushes=colors)
         self.graphWidget.addItem(bargraph)
         ax = self.graphWidget.getAxis('left')
         ax.setTicks(ticks)
